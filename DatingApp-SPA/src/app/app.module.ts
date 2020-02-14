@@ -1,3 +1,4 @@
+import { ErrorIntercepterProvider } from './_services/error.interceptor';
 import { AuthService } from './_services/auth.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -10,22 +11,9 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 
 @NgModule({
-   declarations: [
-      AppComponent,
-      NavComponent,
-      HomeComponent,
-      RegisterComponent
-   ],
-   imports: [
-      BrowserModule,
-      HttpClientModule,
-      FormsModule
-   ],
-   providers: [
-      AuthService
-   ],
-   bootstrap: [
-      AppComponent
-   ]
+  declarations: [AppComponent, NavComponent, HomeComponent, RegisterComponent],
+  imports: [BrowserModule, HttpClientModule, FormsModule],
+  providers: [ErrorIntercepterProvider, AuthService],
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
