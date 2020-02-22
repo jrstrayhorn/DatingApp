@@ -1,8 +1,11 @@
+import { ErrorService } from './_services/error.service';
+import { MemberListResolver } from './_resolvers/member-list.resolver';
+import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { ErrorIntercepterProvider } from './_services/error.interceptor';
 import { AuthService } from './_services/auth.service';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -53,7 +56,16 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [ErrorIntercepterProvider, AuthService],
+  providers: [
+    ErrorIntercepterProvider,
+    AuthService,
+    MemberDetailResolver,
+    MemberListResolver,
+    {
+      provide: ErrorHandler,
+      useClass: ErrorService
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
