@@ -1,3 +1,4 @@
+import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { ErrorIntercepterProvider } from './_services/error.interceptor';
 import { AuthService } from './_services/auth.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -32,7 +33,8 @@ export function tokenGetter() {
     MemberListComponent,
     ListsComponent,
     MessagesComponent,
-    MemberCardComponent
+    MemberCardComponent,
+    MemberDetailComponent
   ],
   imports: [
     BrowserModule,
