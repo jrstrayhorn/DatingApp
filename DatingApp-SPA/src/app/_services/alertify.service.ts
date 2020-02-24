@@ -16,6 +16,14 @@ export class AlertifyService {
     });
   }
 
+  confirmCancel(
+    message: string,
+    okCallback: () => any,
+    cancelCallback: () => any
+  ) {
+    alertify.confirm(message, okCallback, cancelCallback);
+  }
+
   success(message: string) {
     alertify.success(message);
   }

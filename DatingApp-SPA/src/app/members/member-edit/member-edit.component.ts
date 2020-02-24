@@ -2,7 +2,7 @@ import { AlertifyService } from './../../_services/alertify.service';
 import { AuthService } from './../../_services/auth.service';
 import { UserService } from './../../_services/user.service';
 import { Observable } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { User } from 'src/app/_models/user';
 import { NgForm } from '@angular/forms';
 
@@ -12,8 +12,15 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./member-edit.component.css']
 })
 export class MemberEditComponent implements OnInit {
-  // not working @ViewChild('editForm', { static: true }) editForm: NgForm;
+  @ViewChild('editForm', { static: false }) editForm: NgForm;
   user$: Observable<User>;
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    if (this.editForm.dirty) {
+      $event.returnValue = true;
+    }
+  }
 
   constructor(
     private userService: UserService,
@@ -25,9 +32,9 @@ export class MemberEditComponent implements OnInit {
     this.user$ = this.userService.getUser(this.authService.decodedToken.nameid);
   }
 
-  updateUser(user: User, editForm: NgForm) {
+  updateUser(user: User) {
     console.log(user);
     this.alertify.success('Profile updated successfully');
-    editForm.resetForm(user);
+    this.editForm.resetForm(user);
   }
 }
