@@ -11,10 +11,12 @@ export class ErrorService implements ErrorHandler {
 
   handleError(error: any) {
     if (typeof error === 'string') {
+      console.log(error);
       this.alertify.error(error);
       return;
     }
     const sanitized = this.sanitiseError(error);
+    console.log(`${sanitized.message} - ${sanitized.details}`);
     this.alertify.error(`${sanitized.message}`);
   }
 
