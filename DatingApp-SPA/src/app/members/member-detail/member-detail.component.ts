@@ -64,6 +64,7 @@ export class MemberDetailComponent implements OnInit {
   //   return imageUrls;
   // }
 
+  // TODO: Make this a pipe
   getImagesFromUserPhotos(userPhotos: Photo[]): any[] {
     return userPhotos.map(p => {
       return {
