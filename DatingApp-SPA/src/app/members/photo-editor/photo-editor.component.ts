@@ -1,3 +1,4 @@
+import { UserService } from 'src/app/_services/user.service';
 import { environment } from './../../../environments/environment';
 import { Photo } from './../../_models/photo';
 import { Component, OnInit, Input } from '@angular/core';
@@ -15,7 +16,10 @@ export class PhotoEditorComponent implements OnInit {
   hasBaseDropZoneOver: boolean;
   baseUrl = environment.apiUrl;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.initializeUploader();
@@ -58,5 +62,13 @@ export class PhotoEditorComponent implements OnInit {
         this.photos.push(photo);
       }
     };
+  }
+
+  setMainPhoto(photo: Photo) {
+    this.userService
+      .setMainPhoto(this.authService.decodedToken.nameid, photo.id)
+      .subscribe(() => {
+        console.log('Success to main');
+      });
   }
 }
