@@ -1,3 +1,4 @@
+import { AlertifyService } from './../../_services/alertify.service';
 import { UserService } from 'src/app/_services/user.service';
 import { environment } from './../../../environments/environment';
 import { Photo } from './../../_models/photo';
@@ -20,7 +21,8 @@ export class PhotoEditorComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private alertify: AlertifyService
   ) {}
 
   ngOnInit() {
@@ -81,5 +83,19 @@ export class PhotoEditorComponent implements OnInit {
           JSON.stringify(this.authService.currentUser)
         );
       });
+  }
+
+  deletePhoto(id: number) {
+    this.alertify.confirm('Are you sure you want to delete this photo?', () => {
+      this.userService
+        .deletePhoto(this.authService.decodedToken.nameid, id)
+        .subscribe(() => {
+          this.photos.splice(
+            this.photos.findIndex(p => p.id === id),
+            1
+          );
+          this.alertify.success('Photo has been deleted');
+        });
+    });
   }
 }
