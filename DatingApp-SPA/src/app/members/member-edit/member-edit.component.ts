@@ -14,6 +14,7 @@ import { NgForm } from '@angular/forms';
 export class MemberEditComponent implements OnInit {
   @ViewChild('editForm', { static: false }) editForm: NgForm;
   user$: Observable<User>;
+  photoUrl: string;
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
@@ -30,6 +31,9 @@ export class MemberEditComponent implements OnInit {
 
   ngOnInit() {
     this.user$ = this.userService.getUser(this.authService.decodedToken.nameid);
+    this.authService.currentPhotoUrl.subscribe(
+      photoUrl => (this.photoUrl = photoUrl)
+    );
   }
 
   updateUser(user: User) {
