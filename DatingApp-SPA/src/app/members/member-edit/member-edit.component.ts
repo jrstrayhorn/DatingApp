@@ -40,4 +40,8 @@ export class MemberEditComponent implements OnInit {
         this.editForm.resetForm(user);
       });
   }
+
+  // updateMainPhoto(photoUrl) {
+  //   this.user.photoUrl = photoUrl;
+  // }
 }

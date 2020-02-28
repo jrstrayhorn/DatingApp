@@ -98,7 +98,10 @@
               </form>
             </tab>
             <tab heading="Edit Photos">
-              <app-photo-editor [photos]="user.photos"></app-photo-editor>
+              <app-photo-editor
+                [photos]="user.photos"
+                (getMemberPhotoChange)="user.photoUrl = $event"
+              ></app-photo-editor>
             </tab>
           </tabset>
         </div>
