@@ -4,6 +4,7 @@ import { UserService } from '../../_services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../_models/user';
 import { ActivatedRoute } from '@angular/router';
+import { PaginatedResult } from 'src/app/_models/pagination';
 
 @Component({
   selector: 'app-member-list',
@@ -11,7 +12,10 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./member-list.component.css']
 })
 export class MemberListComponent implements OnInit {
-  users$: Observable<User[]>;
+  pageNumber = 1;
+  pageSize = 5;
+
+  users$: Observable<PaginatedResult<User[]>>;
   // users: User[];
 
   constructor(
@@ -21,7 +25,7 @@ export class MemberListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.users$ = this.userService.getUsers();
+    this.users$ = this.userService.getUsers(this.pageNumber, this.pageSize);
     // this.route.data.subscribe(data => {
     //   this.users = data.users;
     // });
