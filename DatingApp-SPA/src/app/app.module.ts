@@ -34,6 +34,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { FileUploadModule } from 'ng2-file-upload';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimeagoModule } from 'ngx-timeago';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -68,6 +69,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
     BrowserAnimationsModule,
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    PaginationModule.forRoot(),
     TabsModule.forRoot(),
     RouterModule.forRoot(appRoutes),
     TimeagoModule.forRoot(),

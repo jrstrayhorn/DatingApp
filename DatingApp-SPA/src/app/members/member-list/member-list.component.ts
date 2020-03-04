@@ -1,10 +1,11 @@
-import { Observable } from 'rxjs';
+import { map, startWith, switchMap, share, pluck } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 import { AlertifyService } from '../../_services/alertify.service';
 import { UserService } from '../../_services/user.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../_models/user';
 import { ActivatedRoute } from '@angular/router';
-import { PaginatedResult } from 'src/app/_models/pagination';
+import { PaginatedResult, Pagination } from 'src/app/_models/pagination';
 
 @Component({
   selector: 'app-member-list',
@@ -15,8 +16,12 @@ export class MemberListComponent implements OnInit {
   pageNumber = 1;
   pageSize = 5;
 
-  users$: Observable<PaginatedResult<User[]>>;
+  pageStream = new Subject<any>();
+
+  // users$: Observable<PaginatedResult<User[]>>;
   // users: User[];
+  users$: Observable<User[]>;
+  pagination$: Observable<Pagination>;
 
   constructor(
     private userService: UserService,
@@ -25,20 +30,38 @@ export class MemberListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.users$ = this.userService.getUsers(this.pageNumber, this.pageSize);
+    const pageSource = this.pageStream.pipe(
+      map(pageNumber => {
+        console.log(`page number is: ${pageNumber}`);
+        return { page: pageNumber };
+      })
+    );
+
+    const source = pageSource.pipe(
+      startWith({ page: this.pageNumber }),
+      switchMap((params: { page: number }) => {
+        return this.userService.getUsers(params.page, 5);
+      }),
+      share()
+    );
+
+    this.users$ = source.pipe(pluck('results'));
+    this.pagination$ = source.pipe(pluck('pagination'));
+
+    // this.users$ = this.userService.getUsers(this.pageNumber, this.pageSize);
     // this.route.data.subscribe(data => {
     //   this.users = data.users;
     // });
   }
 
-  // loadUsers() {
-  //   this.userService.getUsers().subscribe(
-  //     (users: User[]) => {
-  //       this.users = users;
-  //     },
-  //     error => {
-  //       this.alertify.error(error);
-  //     }
-  //   );
-  // }
+  pageChanged(event: any): void {}
+
+  logMe(msg): void {
+    console.log(msg);
+  }
+
+  loadUsers(page, itemsPerPage) {
+    // this.users$ = this.userService.getUsers(page, itemsPerPage);
+    this.pageStream.next(page);
+  }
 }

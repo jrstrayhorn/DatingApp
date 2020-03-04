@@ -1,10 +1,46 @@
-<div class="container mt-5">
-  <div class="row">
-    <div
-      *ngFor="let user of (users$ | async)?.results"
-      class="col-lg-2 col-md-3 col-sm-6"
-    >
-      <app-member-card [user]="user"></app-member-card>
+<ng-container *ngIf="users$ | async as users">
+  <div class="container mt-5">
+    <div class="row">
+      <div *ngFor="let user of users" class="col-lg-2 col-md-3 col-sm-6">
+        <app-member-card [user]="user"></app-member-card>
+      </div>
     </div>
   </div>
-</div>
+</ng-container>
+<ng-container *ngIf="pagination$ | async as pagination">
+  <div class="d-flex justify-content-center">
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="
+        pagination.currentPage = $event.page;
+        loadUsers(pagination.currentPage, pagination.itemsPerPage)
+      "
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
+  </div>
+</ng-container>
+<!-- 
+  <div class="d-flex justify-content-center">
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="users.pagination.totalItems"
+      [itemsPerPage]="users.pagination.itemsPerPage"
+      [(ngModel)]="users.pagination.currentPage"
+      (pageChanged)="
+        users.pagination.currentPage = $event.page;
+        loadUsers(users.pagination.currentPage, users.pagination.itemsPerPage)
+      "
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
+  </div> -->
