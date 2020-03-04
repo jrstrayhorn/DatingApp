@@ -16,12 +16,20 @@ export class MemberListComponent implements OnInit {
   pageNumber = 1;
   pageSize = 5;
 
+  user: User = JSON.parse(localStorage.getItem('user'));
+  genderList = [
+    { value: 'male', display: 'Males' },
+    { value: 'female', display: 'Females' }
+  ];
+  userParams: any = {};
+
   pageStream = new Subject<any>();
 
   // users$: Observable<PaginatedResult<User[]>>;
   // users: User[];
-  users$: Observable<User[]>;
-  pagination$: Observable<Pagination>;
+  // users$: Observable<User[]>;
+  // pagination$: Observable<Pagination>;
+  source$: Observable<PaginatedResult<User[]>>;
 
   constructor(
     private userService: UserService,
@@ -30,6 +38,10 @@ export class MemberListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.userParams.gender = this.user.gender === 'female' ? 'male' : 'female';
+    this.userParams.minAge = 18;
+    this.userParams.maxAge = 99;
+
     const pageSource = this.pageStream.pipe(
       map(pageNumber => {
         console.log(`page number is: ${pageNumber}`);
@@ -37,16 +49,17 @@ export class MemberListComponent implements OnInit {
       })
     );
 
-    const source = pageSource.pipe(
+    this.source$ = pageSource.pipe(
       startWith({ page: this.pageNumber }),
       switchMap((params: { page: number }) => {
-        return this.userService.getUsers(params.page, 5);
-      }),
-      share()
+        return this.userService.getUsers(params.page, 5, this.userParams);
+      })
+      // ,
+      // share()
     );
 
-    this.users$ = source.pipe(pluck('results'));
-    this.pagination$ = source.pipe(pluck('pagination'));
+    // this.users$ = source.pipe(pluck('results'));
+    // this.pagination$ = source.pipe(pluck('pagination'));
 
     // this.users$ = this.userService.getUsers(this.pageNumber, this.pageSize);
     // this.route.data.subscribe(data => {
@@ -54,14 +67,20 @@ export class MemberListComponent implements OnInit {
     // });
   }
 
-  pageChanged(event: any): void {}
+  loadUsers(page?, itemsPerPage?) {
+    if (page == null) {
+      this.pageStream.next(1);
+      return;
+    }
 
-  logMe(msg): void {
-    console.log(msg);
-  }
-
-  loadUsers(page, itemsPerPage) {
     // this.users$ = this.userService.getUsers(page, itemsPerPage);
     this.pageStream.next(page);
+  }
+
+  resetFilters() {
+    this.userParams.gender = this.user.gender === 'female' ? 'male' : 'female';
+    this.userParams.minAge = 18;
+    this.userParams.maxAge = 99;
+    this.loadUsers();
   }
 }
