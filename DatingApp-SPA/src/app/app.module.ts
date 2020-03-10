@@ -1,3 +1,4 @@
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
@@ -60,7 +61,8 @@ export class CustomHammerConfig extends HammerGestureConfig {
     MemberCardComponent,
     MemberDetailComponent,
     MemberEditComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+    MemberMessagesComponent
   ],
   imports: [
     BrowserModule,
