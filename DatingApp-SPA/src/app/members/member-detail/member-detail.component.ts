@@ -1,6 +1,13 @@
 import { map, switchMap } from 'rxjs/operators';
 import { AlertifyService } from './../../_services/alertify.service';
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+  AfterViewInit
+} from '@angular/core';
 import { User } from 'src/app/_models/user';
 import { UserService } from 'src/app/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -11,17 +18,29 @@ import {
   NgxGalleryAnimation
 } from 'ngx-gallery';
 import { Photo } from 'src/app/_models/photo';
+import { TabsetComponent } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-member-detail',
   templateUrl: './member-detail.component.html',
   styleUrls: ['./member-detail.component.css']
 })
-export class MemberDetailComponent implements OnInit {
+export class MemberDetailComponent implements OnInit, AfterViewInit {
   // user: User;
   user$: Observable<User>;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
+  @ViewChild('memberTabs', { static: false }) set memberTabs(
+    memberTabs: TabsetComponent
+  ) {
+    if (memberTabs) {
+      this.myMemberTabs = memberTabs;
+      const selectedTab = +this.route.snapshot.queryParams['tab'];
+      this.myMemberTabs.tabs[selectedTab > 0 ? selectedTab : 0].active = true;
+    }
+  }
+  // @ViewChildren(TabsetComponent) allTabs: QueryList<TabsetComponent>;
+  myMemberTabs: TabsetComponent;
 
   constructor(
     private userService: UserService,
@@ -29,7 +48,32 @@ export class MemberDetailComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
+  ngAfterViewInit() {
+    // this.allTabs.changes.subscribe((comps: QueryList<TabsetComponent>) => {
+    //   console.log(`comps on page: ${comps.length}`);
+    //   if (comps.length === 1) {
+    //     this.myMemberTabs = comps.first;
+    //     // const selectedTab = +this.route.snapshot.queryParams['tab'];
+    //     // this.myMemberTabs.tabs[selectedTab > 0 ? selectedTab : 0].active = true;
+    //     this.route.queryParams.subscribe(params => {
+    //       const selectedTab = params['tab'];
+    //       this.myMemberTabs.tabs[
+    //         selectedTab > 0 ? selectedTab : 0
+    //       ].active = true;
+    //     });
+    //   }
+    // });
+    // // this.route.queryParams.subscribe(params => {
+    //   const selectedTab = params['tab'];
+    //   this.memberTabs.tabs[selectedTab > 0 ? selectedTab : 0].active = true;
+    // });
+  }
+
   ngOnInit() {
+    // this.route.queryParams.subscribe(params => {
+    //   const selectedTab = params['tab'];
+    //   this.memberTabs.tabs[selectedTab > 0 ? selectedTab : 0].active = true;
+    // });
     this.user$ = this.route.paramMap.pipe(
       map(params => params.get('id')),
       switchMap(id => this.userService.getUser(id))
@@ -74,6 +118,11 @@ export class MemberDetailComponent implements OnInit {
         description: p.description
       };
     });
+  }
+
+  selectTab(tabId: number) {
+    // this.memberTabs.tabs[tabId].active = true;
+    this.myMemberTabs.tabs[tabId].active = true;
   }
 
   // members/4
