@@ -11,8 +11,9 @@ import { AuthService } from 'src/app/_services/auth.service';
 })
 export class MemberMessagesComponent implements OnInit {
   @Input() recipientId: number;
-  messages: Message[];
+  // messages: Message[];
   messages$: Observable<Message[]>;
+  newMessage: any = {};
 
   constructor(
     private userService: UserService,
@@ -24,6 +25,16 @@ export class MemberMessagesComponent implements OnInit {
       this.authService.decodedToken.nameid,
       this.recipientId
     );
+  }
+
+  sendMessage(messages: Message[]) {
+    this.newMessage.recipientId = this.recipientId;
+    this.userService
+      .sendMessage(this.authService.decodedToken.nameid, this.newMessage)
+      .subscribe((message: Message) => {
+        messages.unshift(message);
+        this.newMessage.content = '';
+      });
   }
 
   // loadMessages() {

@@ -16,6 +16,11 @@ export class ErrorService implements ErrorHandler {
       return;
     }
     const sanitized = this.sanitiseError(error);
+    if (
+      sanitized.message.includes('ExpressionChangedAfterItHasBeenCheckedError')
+    ) {
+      return;
+    }
     console.log(`${sanitized.message} - ${sanitized.details}`);
     this.alertify.error(`${sanitized.message}`);
   }

@@ -80,6 +80,7 @@ namespace DatingApp.API.Controllers
 
             messageForCreationDto.SenderId = userId;
 
+            var sender = await _repo.GetUser(userId);
             var recipient = await _repo.GetUser(messageForCreationDto.RecipientId);
 
             if (recipient == null)
@@ -91,7 +92,7 @@ namespace DatingApp.API.Controllers
 
             if (await _repo.SaveAll())
             {
-                var messageToReturn = _mapper.Map<MessageForCreationDto>(message);
+                var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
                 return CreatedAtRoute("GetMessage", new { userId, id = message.Id }, messageToReturn);
             }
 

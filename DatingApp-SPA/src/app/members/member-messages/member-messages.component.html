@@ -1,11 +1,11 @@
-<div class="card">
+<div class="card" *ngIf="messages$ | async as messages">
   <div class="card-body">
     <div *ngIf="messages?.length === 0">
       <p>No messages yet... say hi by using the message box below.</p>
     </div>
 
     <ul class="chat">
-      <li *ngFor="let message of messages$ | async">
+      <li *ngFor="let message of messages">
         <!-- to them -->
         <div *ngIf="message.senderId == recipientId">
           <span class="chat-img float-left">
@@ -41,13 +41,13 @@
             <div class="header">
               <small class="text-muted">
                 <span class="fa fa-clock-o">{{
-                  message.messageSent | timeago
+                  message.messageSent | timeago: false
                 }}</span>
                 <span *ngIf="!message.isRead" class="text-danger"
                   >(unread)</span
                 >
                 <span *ngIf="message.isRead" class="text-success"
-                  >(Read {{ message.dateRead | timeago }})</span
+                  >(Read {{ message.dateRead | timeago: false }})</span
                 >
               </small>
               <strong class="primary-font  float-right">{{
@@ -61,15 +61,23 @@
     </ul>
   </div>
   <div class="card-footer">
-    <form action="">
+    <form
+      #messageForm="ngForm"
+      (ngSubmit)="messageForm.valid && sendMessage(messages)"
+    >
       <div class="input-group">
         <input
           type="text"
+          [(ngModel)]="newMessage.content"
+          name="content"
+          required
           class="form-control input-sm"
           placeholder="send a private message"
         />
         <div class="input-group-append">
-          <button class="btn btn-primary">Send</button>
+          <button class="btn btn-primary" [disabled]="!messageForm.valid">
+            Send
+          </button>
         </div>
       </div>
     </form>
