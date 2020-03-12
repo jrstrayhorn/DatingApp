@@ -1,3 +1,4 @@
+import { AlertifyService } from './../_services/alertify.service';
 import { Component, OnInit } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { PaginatedResult } from '../_models/pagination';
@@ -22,7 +23,8 @@ export class MessagesComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertify: AlertifyService
   ) {}
 
   ngOnInit() {
@@ -31,11 +33,28 @@ export class MessagesComponent implements OnInit {
       switchMap((page: number) => {
         return this.userService.getMessages(
           this.authService.decodedToken.nameid,
-          this.pageNumber,
+          page,
           this.pageSize,
           this.messageContainer
         );
       })
+    );
+  }
+
+  deleteMessage(id: number, source: PaginatedResult<Message[]>) {
+    this.alertify.confirm(
+      'Are you sure you want to delete this message?',
+      () => {
+        this.userService
+          .deleteMessage(id, this.authService.decodedToken.nameid)
+          .subscribe(() => {
+            source.results.splice(
+              source.results.findIndex(m => m.id === id),
+              1
+            );
+            this.alertify.success('Message has been deleted');
+          });
+      }
     );
   }
 
