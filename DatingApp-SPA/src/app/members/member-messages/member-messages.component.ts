@@ -1,3 +1,4 @@
+import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Component, OnInit, Input } from '@angular/core';
 import { Message } from 'src/app/_models/message';
@@ -21,10 +22,21 @@ export class MemberMessagesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.messages$ = this.userService.getMessageThread(
-      this.authService.decodedToken.nameid,
-      this.recipientId
-    );
+    const currentUserId = +this.authService.decodedToken.nameid;
+    this.messages$ = this.userService
+      .getMessageThread(currentUserId, this.recipientId)
+      .pipe(
+        tap(messages => {
+          for (const message of messages) {
+            if (
+              message.isRead === false &&
+              message.recipientId === currentUserId
+            ) {
+              this.userService.markAsRead(currentUserId, message.id);
+            }
+          }
+        })
+      );
   }
 
   sendMessage(messages: Message[]) {
